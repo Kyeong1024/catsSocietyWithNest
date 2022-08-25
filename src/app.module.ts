@@ -11,7 +11,12 @@ import mongoose from 'mongoose';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DATABASE_URL, { useNewUrlParser: true }),
+    MongooseModule.forRoot(process.env.DATABASE_URL, {
+      useNewUrlParser: true,
+      // useUnifiedTopology: true,
+      // useCreateIndex: true,
+      // useFindAndModify: false,
+    }),
     CatsModule,
     UsersModule,
   ],
