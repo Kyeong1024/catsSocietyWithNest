@@ -26,6 +26,6 @@ export class CatsService {
       password: hash,
     });
 
-    return cat.readOnlyData;
+    return cat.readonlydata;
   }
 }

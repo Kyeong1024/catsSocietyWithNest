@@ -9,7 +9,9 @@ import {
   Patch,
   Post,
   Put,
+  Req,
   UseFilters,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -20,6 +22,9 @@ import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor'
 import { PositivePipe } from 'src/common/pipes/positive.pipe';
 import { CatsService } from './cats.service';
 import { CatRequestDto } from './dto/cats.request.dto';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
 
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
@@ -31,8 +36,9 @@ export class CatsController {
   ) {}
 
   @Get()
-  getCurrentCat() {
-    return 'current cat';
+  @UseGuards(JwtAuthGuard)
+  getCurrentCat(@CurrentUser() cat) {
+    return cat.readonlydata;
   }
 
   @ApiOperation({ summary: '회원가입' })

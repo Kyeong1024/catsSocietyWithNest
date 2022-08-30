@@ -47,12 +47,12 @@ export class Cat {
   @IsString()
   imageUrl: string;
 
-  readonly readOnlyData: { id: string; email: string; name: string };
+  readonly readonlydata: { id: string; email: string; name: string };
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat);
 
-CatSchema.virtual('readOnlyData').get(function (this: Cat) {
+CatSchema.virtual('readonlydata').get(function (this: Cat) {
   return {
     id: this.id,
     email: this.email,
