@@ -43,11 +43,19 @@ export class Cat {
   @IsNotEmpty()
   name: string;
 
-  @Prop()
+  @Prop({
+    default:
+      'https://upload.wikimedia.org/wikipedia/commons/0/0b/Cat_poster_1.jpg',
+  })
   @IsString()
   imageUrl: string;
 
-  readonly readonlydata: { id: string; email: string; name: string };
+  readonly readonlydata: {
+    id: string;
+    email: string;
+    name: string;
+    imageUrl: string;
+  };
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat);
@@ -57,5 +65,6 @@ CatSchema.virtual('readonlydata').get(function (this: Cat) {
     id: this.id,
     email: this.email,
     name: this.name,
+    imageUrl: this.imageUrl,
   };
 });

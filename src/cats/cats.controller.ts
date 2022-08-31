@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Req,
+  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
@@ -25,6 +26,9 @@ import { CatRequestDto } from './dto/cats.request.dto';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/common/utils/multer.options';
+import { Cat } from './cat.schema';
 
 @Controller('cats')
 @UseInterceptors(SuccessInterceptor)
@@ -66,8 +70,16 @@ export class CatsController {
     return 'logOut';
   }
 
-  @Post('upload/cat')
-  uploadCatImg() {
-    return 'uploadImg';
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('images', 10, multerOptions('cats')))
+  @UseGuards(JwtAuthGuard)
+  uploadCatImg(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @CurrentUser() cat: Cat,
+  ) {
+    console.log(files);
+
+    // return { image: `http://localhoast:8003/media/cats/${files[0].filename}` };
+    return this.catsService.uploadImg(cat, files);
   }
 }
