@@ -1,17 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { Comment } from 'src/comments/comment.schema';
 
-export type CatDocument = Cat & Document;
-
-@Schema({ timestamps: true })
-export class Cat {
-  @ApiProperty({
-    example: '507f1f77bcf86cd799439011',
-    description: 'id',
-  })
-  id: any;
+@Schema({ timestamps: true, collection: 'cats' })
+export class Cat extends Document {
+  // nest v9, mongoose v6 에서는 id를 꼭 넣어줘야 했지만 nest v8, mongoose v5에서는 괜찮음.
+  // @ApiProperty({
+  //   example: '507f1f77bcf86cd799439011',
+  //   description: 'id',
+  // })
+  // id: any;
 
   @ApiProperty({
     example: 'abc@abc.com',
@@ -50,21 +50,35 @@ export class Cat {
   @IsString()
   imageUrl: string;
 
+  readonly comments: Comment[];
+
   readonly readonlydata: {
     id: string;
     email: string;
     name: string;
     imageUrl: string;
+    comments: Comment[];
   };
 }
 
-export const CatSchema = SchemaFactory.createForClass(Cat);
+const _CatSchema = SchemaFactory.createForClass(Cat);
 
-CatSchema.virtual('readonlydata').get(function (this: Cat) {
+_CatSchema.virtual('readonlydata').get(function (this: Cat) {
   return {
     id: this.id,
     email: this.email,
     name: this.name,
     imageUrl: this.imageUrl,
+    comments: this.comments,
   };
 });
+
+_CatSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'info',
+});
+_CatSchema.set('toObject', { virtuals: true });
+_CatSchema.set('toJSON', { virtuals: true });
+
+export const CatSchema = _CatSchema;

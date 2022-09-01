@@ -82,4 +82,9 @@ export class CatsController {
     // return { image: `http://localhoast:8003/media/cats/${files[0].filename}` };
     return this.catsService.uploadImg(cat, files);
   }
+
+  @Get('all')
+  async getAllCat() {
+    return await this.catsService.getAllCat();
+  }
 }

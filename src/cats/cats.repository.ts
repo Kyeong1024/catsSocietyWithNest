@@ -1,12 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Cat, CatDocument } from './cat.schema';
+import { Model, Types } from 'mongoose';
+// import { Comment, CommentSchema } from 'src/comments/comment.schema';
+import { Cat } from './cat.schema';
 import { CatRequestDto } from './dto/cats.request.dto';
+// import * as mongoose from 'mongoose';
 
 @Injectable()
 export class CatsRepository {
-  constructor(@InjectModel(Cat.name) private catModel: Model<CatDocument>) {}
+  constructor(@InjectModel(Cat.name) private catModel: Model<Cat>) {}
 
   async existsByEmail(email: string): Promise<boolean> {
     const result = await this.catModel.exists({ email });
@@ -21,7 +23,9 @@ export class CatsRepository {
     return this.catModel.findOne({ email });
   }
 
-  async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
+  async findCatByIdWithoutPassword(
+    catId: string | Types.ObjectId,
+  ): Promise<Cat | null> {
     const cat = this.catModel.findById(catId).select('-password');
     return cat;
   }
@@ -37,5 +41,16 @@ export class CatsRepository {
     const newCat = await cat.save();
 
     return newCat.readonlydata;
+  }
+
+  async findAll() {
+    // 이렇게 해도 동작하나 아래 CommentsModel없이도 동작한다.
+    // const CommentsModel = mongoose.model('Comments', CommentsSchema);
+    // const result = await this.catModel.find().populate('comments', CommentsModel);
+
+    const result = await this.catModel.find().populate('comments');
+    // console.log('----->', result);
+
+    return result;
   }
 }

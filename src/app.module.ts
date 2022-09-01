@@ -7,20 +7,22 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import mongoose from 'mongoose';
+import { CommentsModule } from './comments/comments.module';
+import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DATABASE_URL, {
       useNewUrlParser: true,
-      // useUnifiedTopology: true,
+      useUnifiedTopology: true,
       // useCreateIndex: true,
       // useFindAndModify: false,
     }),
     CatsModule,
     UsersModule,
     AuthModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
